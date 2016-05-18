@@ -13,6 +13,7 @@ class Database
     virtual void insert(Key key, T value) = 0;
     virtual void remove(Key key) = 0;
     virtual T get(Key key) = 0;
+    virtual void debug() {}
   
   protected:
     Cache* cache;

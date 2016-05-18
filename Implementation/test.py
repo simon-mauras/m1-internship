@@ -15,9 +15,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 delta = 100
-smooth = 10
+smooth = 1
 
 data = pd.read_csv(filename).set_index("Nb")
-deriv = data.diff(smooth) / (smooth * delta);
-deriv.sort_index().plot()
+#deriv = data.diff(smooth) / (smooth * delta);
+#deriv.sort_index().plot()
+data.plot()
 plt.show()

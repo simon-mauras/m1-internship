@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "storage_fstream.cpp"
 #include "cache_lru.cpp"
-#include "database_bst.cpp"
+#include "database_cola.cpp"
 using namespace std;
 
 typedef long long int ll;
@@ -14,7 +14,7 @@ int main()
 {
   Storage* s = new Storage_fstream("database.bin");
   Cache* c = new Cache_lru(s);
-  Database<int,int>* d = new Database_bst<int,int>(c);
+  Database<int,int>* d = new Database_cola<int,int>(c);
   
   ofstream stats;
   
@@ -36,6 +36,7 @@ int main()
   for (int i=0; i<N; i++)
   {
     d->insert(keys[i], keys[i]);
+    //d->debug();
     if ((i+1) % dt == 0)
     {
       stats << i+1 << ",";
@@ -64,6 +65,7 @@ int main()
   for (int i=0; i<N; i++)
   {
     d->remove(keys[i]);
+    //d->debug();
     if ((N-1-i) % dt == 0)
     {
       stats << N-1-i << ",";
