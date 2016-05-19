@@ -21,7 +21,7 @@ class Storage_fstream: public Storage
 
 Storage_fstream::Storage_fstream(const char* filename): Storage()
 {
-  fs.open(filename, fstream::in | fstream::out | fstream::binary);
+  fs.open(filename, fstream::in | fstream::out | fstream::binary | fstream::trunc);
   if (!fs.good()) {
     throw runtime_error("Fstream error: open");
   }

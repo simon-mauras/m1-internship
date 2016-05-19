@@ -18,7 +18,7 @@ delta = 100
 smooth = 1
 
 data = pd.read_csv(filename).set_index("Nb")
-#deriv = data.diff(smooth) / (smooth * delta);
-#deriv.sort_index().plot()
+data["Total"] = data["Input"] + data["Output"]
 data.plot()
+
 plt.show()

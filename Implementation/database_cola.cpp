@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_DATABASE_BST
-#define _INCLUDE_DATABASE_BST
+#ifndef _INCLUDE_DATABASE_COLA
+#define _INCLUDE_DATABASE_COLA
 
 #include "database.cpp"
 #include <functional>
@@ -157,8 +157,32 @@ void Database_cola<Key,T,Compare>::remove(Key key)
 template <class Key, class T, class Compare>
 T Database_cola<Key,T,Compare>::get(Key key)
 {
-  // TODO
-  return T();
+  size_t nb_elems;
+  this->cache->read((char*)&nb_elems, 0, sizeof(size_t));
+  for (size_t i=0; (1lu << i) <= nb_elems; i++)
+  {
+    if ((1lu << i) & nb_elems)
+    {
+      size_t begin = (1lu << i) - 1;
+      size_t end = (1lu << (i+1)) - 1;
+      while (begin < end)
+      {
+        Element elem;
+        size_t med = (begin + end) / 2;
+        size_t pos = sizeof(size_t) + med * sizeof(Element);
+        this->cache->read((char*)&elem, pos, sizeof(Element));
+        if (compare(key, elem.key))
+          end = med;
+        else if (compare(elem.key, key))
+          begin = med + 1;
+        else if (elem.type == type_insert)
+          return elem.value;
+        else
+          throw runtime_error("Key not found");
+      }
+    }
+  }
+  throw runtime_error("Key not found");
 }
 
 #endif

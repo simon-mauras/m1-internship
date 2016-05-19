@@ -9,14 +9,36 @@ using namespace std;
 
 typedef long long int ll;
 
-const int B = 1 << 5;
-const int T = 10;
+int X = -1;
+int B = 1 << 5;
+const int T = 1;
 
-int main()
+int main(int argc, char* argv[])
 {
+  if (argc != 3)
+  {
+    cout << "Usage: " << argv[0] << " blocksize type" << endl;
+    return 1;
+  }
+  else
+  {
+    B = atoi(argv[1]);
+    if (string(argv[2]) == "bst") X = 1;
+    if (string(argv[2]) == "cola") X = 2;
+    if (X == -1 || B <= 0 || B > (1 << 20))
+    {
+      cout << X << endl;
+      cout << "Error" << endl;
+      return 1;
+    }
+  }
+  
   Storage* s = new Storage_fstream("database.bin");
   Cache* c = new Cache_lru(s);
-  Database<int,int>* d = new Database_cola<int,int>(c);
+  Database<int,int>* d = nullptr;
+  
+  if (X == 1) d = new Database_bst<int,int>(c);
+  if (X == 2) d = new Database_cola<int,int>(c);
   
   ofstream stats;
   
@@ -49,38 +71,6 @@ int main()
   stats.close();
   c->flush();
   c->print_stats();
-  c->reset_stats();
-  
-  // FIND
-  random_shuffle(keys.begin(), keys.end());
-  ll checksum = N * (N-1) / 2;
-  for (auto key : keys)
-    checksum -= d->get(key);
-  c->flush();
-  c->print_stats();
-  c->reset_stats();
-  
-  // DELETE
-  random_shuffle(keys.begin(), keys.end());
-  stats.open("delete.csv");
-  stats << "Nb,Input,Output" << endl;
-  for (int i=0; i<N; i++)
-  {
-    d->remove(keys[i]);
-    //d->debug();
-    if ((N-1-i) % T == 0)
-    {
-      stats << N-1-i << ",";
-      stats << c->get_stats_input() << ",";
-      stats << c->get_stats_output() << endl;
-    }
-  }
-  stats.close();
-  c->flush();
-  c->print_stats();
-  c->reset_stats();
-  
-  cout << checksum << endl;
   
   delete d;
   delete c;
