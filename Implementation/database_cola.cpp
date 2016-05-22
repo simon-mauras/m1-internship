@@ -124,10 +124,10 @@ void Database_cola<Key,T,Compare>::add(Element element)
 template <class Key, class T, class Compare>
 void Database_cola<Key,T,Compare>::debug()
 {
-  cout << "============" << endl;
+  cerr << "============" << endl;
   size_t nb_elems;
   this->cache->read((char*)&nb_elems, 0, sizeof(size_t));
-  cout << nb_elems << endl;
+  cerr << nb_elems << endl;
   for (size_t i=0; (1lu << i) <= nb_elems; i++)
   {
     size_t pos = sizeof(size_t) + ((1lu << i) - 1) * sizeof(Element);
@@ -136,10 +136,10 @@ void Database_cola<Key,T,Compare>::debug()
       Element elem;
       this->cache->read((char*)&elem, pos, sizeof(Element));
       pos += sizeof(Element);
-      cout << elem.key << "(" << elem.type << ") ";
+      cerr << elem.key << "(" << elem.type << ") ";
     }
   }
-  cout << endl;
+  cerr << endl;
 }
 
 template <class Key, class T, class Compare>

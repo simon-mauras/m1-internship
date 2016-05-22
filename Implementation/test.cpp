@@ -10,22 +10,23 @@ using namespace std;
 typedef long long int ll;
 
 const int B = 1 << 5;
+const int M = 1 << 10;
 const int T = 10;
 
 int main()
 {
   Storage* s = new Storage_fstream("database.bin");
   Cache* c = new Cache_lru(s);
-  Database<int,int>* d = new Database_cola<int,int>(c);
+  Database<int,int>* d = new Database_bst<int,int>(c);
   
   ofstream stats;
   
   // MEMORY PARAMETERS
-  c->set_memorysize((1<<8) * B);
+  c->set_memorysize(M);
   c->set_blocksize(B);
   
   // BUILD KEYS
-  ll N = 10000;
+  ll N = 20;
   vector<int> keys;
   for (int i=0; i<N; i++)
     keys.push_back(i);
@@ -38,7 +39,7 @@ int main()
   for (int i=0; i<N; i++)
   {
     d->insert(keys[i], keys[i]);
-    //d->debug();
+    d->debug();
     if ((i+1) % T == 0)
     {
       stats << i+1 << ",";
@@ -67,7 +68,7 @@ int main()
   for (int i=0; i<N; i++)
   {
     d->remove(keys[i]);
-    //d->debug();
+    d->debug();
     if ((N-1-i) % T == 0)
     {
       stats << N-1-i << ",";

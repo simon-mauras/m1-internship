@@ -4,6 +4,7 @@
 #include "database.cpp"
 #include <functional>
 #include <stdexcept>
+#include <stack>
 #include <list>
 
 using namespace std;
@@ -16,6 +17,7 @@ class Database_bst: public Database<Key, T, Compare>
     void insert(Key key, T value);
     void remove(Key key);
     T get(Key key);
+    void debug();
   
   protected:
     Compare compare;
@@ -221,6 +223,41 @@ T Database_bst<Key,T,Compare>::get(Key key)
   size_t pos = find_node(key);
   this->cache->read((char*)&node, pos, sizeof(Node));
   return node.value;
+}
+
+template <class Key, class T, class Compare>
+void Database_bst<Key,T,Compare>::debug()
+{
+  cerr << "============" << endl;
+  size_t nb_elems;
+  this->cache->read((char*)&nb_elems, 0, sizeof(size_t));
+  cerr << nb_elems << endl;
+  
+  typedef pair<bool, size_t> t;
+  stack<t> q;
+  q.push(t(true, sizeof(size_t)));
+  while (!q.empty())
+  {
+    t x = q.top();
+    q.pop();
+    
+    if (x.second == undefined)
+      continue;
+    
+    Node node;
+    this->cache->read((char*)&node, x.second, sizeof(Node));
+    if (x.first)
+    {
+      q.push(t(true, node.right));
+      q.push(t(false, x.second));
+      q.push(t(true, node.left));
+    }
+    else
+    {
+      cerr << node.key << " ";
+    }
+  }
+  cerr << endl;
 }
 
 #endif
