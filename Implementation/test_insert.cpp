@@ -9,9 +9,11 @@ using namespace std;
 
 typedef long long int ll;
 
-int X = -1;
-int B = 1 << 5;
-const int T = 1;
+ll X = -1;
+ll B = 1 << 5;
+ll M = 30000;
+ll N = 10000;
+ll T = 1;
 
 int main(int argc, char* argv[])
 {
@@ -43,11 +45,10 @@ int main(int argc, char* argv[])
   ofstream stats;
   
   // MEMORY PARAMETERS
-  c->set_memorysize((1<<8) * B);
+  c->set_memorysize(M);
   c->set_blocksize(B);
   
   // BUILD KEYS
-  ll N = 10000;
   vector<int> keys;
   for (int i=0; i<N; i++)
     keys.push_back(i);
